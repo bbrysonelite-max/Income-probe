@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSolvencyCalculator } from '../hooks/useSolvencyCalculator';
 import { LegInput } from '../types/types';
-import { Users, AlertTriangle, CheckCircle, ShoppingCart, Save, RotateCcw, Search } from 'lucide-react';
+import { Users, CheckCircle, RotateCcw, Search } from 'lucide-react';
 
 export default function Dashboard() {
   // --- STATE ---
