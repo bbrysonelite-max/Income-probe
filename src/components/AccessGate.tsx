@@ -6,10 +6,19 @@ interface AccessGateProps {
 }
 
 // ---------------------------------------------------------
-// 🔐 SECURITY FREQUENCY
-// CHANGE THIS CODE MANUALLY EVERY MONTH TO LOCK OUT FREELOADERS
+// 🔐 SECURITY FREQUENCY - AUTO-ROTATING MONTHLY ACCESS SYSTEM
 // ---------------------------------------------------------
-const CURRENT_ACCESS_CODE = "ALIEN2025"; 
+const MASTER_PASSWORD = "alien2025"; // Skeleton key - always works
+const MONTH_NAMES = [
+  "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+  "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
+];
+
+// Get current month code automatically
+const getCurrentMonthCode = (): string => {
+  const today = new Date();
+  return MONTH_NAMES[today.getMonth()];
+};
 
 export const AccessGate: React.FC<AccessGateProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -17,17 +26,26 @@ export const AccessGate: React.FC<AccessGateProps> = ({ children }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Check if they already have the valid code saved
+    // Check if they already have a valid saved code
     const savedCode = localStorage.getItem('alien_access_code');
-    if (savedCode === CURRENT_ACCESS_CODE) {
+    const currentMonth = getCurrentMonthCode();
+    
+    if (savedCode === MASTER_PASSWORD || savedCode === currentMonth) {
       setIsAuthenticated(true);
+    } else {
+      // Clear invalid/expired saved codes
+      localStorage.removeItem('alien_access_code');
     }
   }, []);
 
   const handleUnlock = (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputCode.trim().toUpperCase() === CURRENT_ACCESS_CODE) {
-      localStorage.setItem('alien_access_code', CURRENT_ACCESS_CODE);
+    const userInput = inputCode.trim().toUpperCase();
+    const currentMonth = getCurrentMonthCode();
+    
+    // Check if input matches master password OR current month
+    if (userInput === MASTER_PASSWORD.toUpperCase() || userInput === currentMonth) {
+      localStorage.setItem('alien_access_code', userInput);
       setIsAuthenticated(true);
     } else {
       setError('⛔ ACCESS DENIED. INVALID FREQUENCY.');
